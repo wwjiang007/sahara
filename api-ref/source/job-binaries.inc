@@ -12,7 +12,7 @@ Object Storage service.
 List job binaries
 =================
 
-.. rest_method::  GET /v1.1/{tenant_id}/job-binaries
+.. rest_method::  GET /v1.1/{project_id}/job-binaries
 
 Lists the available job binaries.
 
@@ -25,7 +25,7 @@ Request
 
 .. rest_parameters:: parameters.yaml
 
-   - tenant_id: url_tenant_id
+   - project_id: url_project_id
    - limit: limit
    - marker: marker
    - sort_by: sort_by_job_binary
@@ -40,22 +40,22 @@ Response Parameters
    - markers: markers
    - prev: prev
    - next: next
-   - description: description
+   - description: job_binary_description
    - url: url
    - tenant_id: tenant_id
    - created_at: created_at
    - updated_at: updated_at
-   - is_protected: is_protected
-   - is_public: is_public
+   - is_protected: object_is_protected
+   - is_public: object_is_public
    - binaries: binaries
-   - id: id
-   - name: name
+   - id: job_binary_id
+   - name: job_binary_name
 
 
 
 Response Example
 ----------------
-.. rest_method:: GET /v1.1/{tenant_id}/job-binaries?sort_by=created_at
+.. rest_method:: GET /v1.1/{project_id}/job-binaries?sort_by=created_at
 
 .. literalinclude:: samples/job-binaries/list-response.json
    :language: javascript
@@ -66,7 +66,7 @@ Response Example
 Create job binary
 =================
 
-.. rest_method::  POST /v1.1/{tenant_id}/job-binaries
+.. rest_method::  POST /v1.1/{project_id}/job-binaries
 
 Creates a job binary.
 
@@ -78,7 +78,7 @@ Request
 
 .. rest_parameters:: parameters.yaml
 
-   - tenant_id: url_tenant_id
+   - project_id: url_project_id
 
 
 Request Example
@@ -94,15 +94,15 @@ Response Parameters
 
 .. rest_parameters:: parameters.yaml
 
-   - description: description
+   - description: job_binary_description
    - url: url
    - tenant_id: tenant_id
    - created_at: created_at
    - updated_at: updated_at
-   - is_protected: is_protected
-   - is_public: is_public
-   - id: id
-   - name: name
+   - is_protected: object_is_protected
+   - is_public: object_is_public
+   - id: job_binary_id
+   - name: job_binary_name
 
 
 
@@ -111,7 +111,7 @@ Response Parameters
 Show job binary details
 =======================
 
-.. rest_method::  GET /v1.1/{tenant_id}/job-binaries/{job_binary_id}
+.. rest_method::  GET /v1.1/{project_id}/job-binaries/{job_binary_id}
 
 Shows details for a job binary.
 
@@ -124,7 +124,8 @@ Request
 
 .. rest_parameters:: parameters.yaml
 
-   - tenant_id: url_tenant_id
+   - project_id: url_project_id
+   - job_binary_id: url_job_binary_id
 
 
 
@@ -133,15 +134,15 @@ Response Parameters
 
 .. rest_parameters:: parameters.yaml
 
-   - description: description
+   - description: job_binary_description
    - url: url
    - tenant_id: tenant_id
    - created_at: created_at
    - updated_at: updated_at
-   - is_protected: is_protected
-   - is_public: is_public
-   - id: id
-   - name: name
+   - is_protected: object_is_protected
+   - is_public: object_is_public
+   - id: job_binary_id
+   - name: job_binary_name
 
 
 
@@ -157,7 +158,7 @@ Response Example
 Delete job binary
 =================
 
-.. rest_method::  DELETE /v1.1/{tenant_id}/job-binaries/{job_binary_id}
+.. rest_method::  DELETE /v1.1/{project_id}/job-binaries/{job_binary_id}
 
 Deletes a job binary.
 
@@ -170,7 +171,8 @@ Request
 .. rest_parameters:: parameters.yaml
 
 
-   - tenant_id: url_tenant_id
+   - project_id: url_project_id
+   - job_binary_id: url_job_binary_id
 
 
 
@@ -180,7 +182,7 @@ Request
 Update job binary
 =================
 
-.. rest_method::  PUT /v1.1/{tenant_id}/job-binaries/{job_binary_id}
+.. rest_method::  PUT /v1.1/{project_id}/job-binaries/{job_binary_id}
 
 Updates a job binary.
 
@@ -193,7 +195,8 @@ Request
 .. rest_parameters:: parameters.yaml
 
 
-   - tenant_id: url_tenant_id
+   - project_id: url_project_id
+   - job_binary_id: url_job_binary_id
 
 
 Request Example
@@ -211,7 +214,7 @@ Request Example
 Show job binary data
 ====================
 
-.. rest_method::  GET /v1.1/{tenant_id}/job-binaries/{job_binary_id}/data
+.. rest_method::  GET /v1.1/{project_id}/job-binaries/{job_binary_id}/data
 
 Shows data for a job binary.
 
@@ -240,8 +243,8 @@ Request
 
 .. rest_parameters:: parameters.yaml
 
-   - tenant_id: url_tenant_id
-   - job_binary_id: job_binary_id
+   - project_id: url_project_id
+   - job_binary_id: url_job_binary_id
 
 
 Response Parameters

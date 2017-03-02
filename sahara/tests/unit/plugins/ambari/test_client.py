@@ -95,31 +95,115 @@ class AmbariClientTestCase(base.SaharaTestCase):
             "http://spam", verify=False, auth=client._auth,
             headers=self.headers)
 
+    def test_import_credential(self):
+        resp = mock.Mock()
+        resp.text = ""
+        resp.status_code = 200
+        self.http_client.post.return_value = resp
+        client = ambari_client.AmbariClient(self.instance)
+
+        client.import_credential("test", alias="credential",
+                                 data={"some": "data"})
+        self.http_client.post.assert_called_once_with(
+            "http://1.2.3.4:8080/api/v1/clusters/test/credentials/credential",
+            verify=False, data=jsonutils.dumps({"some": "data"}),
+            auth=client._auth, headers=self.headers)
+
+    @mock.patch("sahara.plugins.ambari.client.AmbariClient.check_response")
+    def test_get_alerts_data(self, mock_check_response):
+        cluster = mock.Mock()
+        cluster.name = "test_cluster"
+
+        client = ambari_client.AmbariClient(self.instance)
+
+        # check_response returning empty json
+        mock_check_response.return_value = {}
+
+        res = client.get_alerts_data(cluster)
+        self.assertEqual(res, [])
+
+        self.http_client.get.assert_called_once_with(
+            "http://1.2.3.4:8080/api/v1/clusters/test_cluster/alerts?fields=*",
+            verify=False, auth=client._auth,
+            headers=self.headers)
+
+        mock_check_response.assert_called_once()
+
+        # check_response returning json with items as key
+        mock_check_response.return_value = {'items': ['item1', 'item2']}
+
+        res = client.get_alerts_data(cluster)
+        self.assertEqual(res, ['item1', 'item2'])
+
+        self.http_client.get.assert_called_with(
+            "http://1.2.3.4:8080/api/v1/clusters/test_cluster/alerts?fields=*",
+            verify=False, auth=client._auth,
+            headers=self.headers)
+
+        self.assertEqual(self.http_client.get.call_count, 2)
+        self.assertEqual(mock_check_response.call_count, 2)
+
+    def test_check_response(self):
+        resp = mock.Mock()
+        resp.status_code = 404
+
+        self.assertRaises(ambari_client.AmbariNotFound,
+                          ambari_client.AmbariClient.check_response,
+                          resp, True)
+
+        resp.status_code = 200
+        resp.text = u'{"json": "example"}'
+        resp.raise_for_status = mock.Mock()
+
+        res = ambari_client.AmbariClient.check_response(resp)
+
+        self.assertEqual(res, {"json": "example"})
+        resp.raise_for_status.assert_called_once()
+
+    def test_req_id(self):
+        resp = mock.Mock()
+
+        resp.text = None
+        self.assertRaises(p_exc.HadoopProvisionError,
+                          ambari_client.AmbariClient.req_id, resp)
+
+        resp.text = u'{"text" : "example"}'
+        self.assertRaises(p_exc.HadoopProvisionError,
+                          ambari_client.AmbariClient.req_id, resp)
+
+        resp.text = u'{"Requests": {"example" : "text"}}'
+        self.assertRaises(p_exc.HadoopProvisionError,
+                          ambari_client.AmbariClient.req_id, resp)
+
+        resp.text = u'{"Requests" : {"id" : "test_id"}}'
+        res = ambari_client.AmbariClient.req_id(resp)
+        self.assertEqual(res, "test_id")
+
     def test_get_registered_hosts(self):
         client = ambari_client.AmbariClient(self.instance)
         resp_data = """{
-  "href" : "http://1.2.3.4:8080/api/v1/hosts",
-  "items" : [
-    {
-      "href" : "http://1.2.3.4:8080/api/v1/hosts/host1",
-      "Hosts" : {
-        "host_name" : "host1"
-      }
-    },
-    {
-      "href" : "http://1.2.3.4:8080/api/v1/hosts/host2",
-      "Hosts" : {
-        "host_name" : "host2"
-      }
-    },
-    {
-      "href" : "http://1.2.3.4:8080/api/v1/hosts/host3",
-      "Hosts" : {
-        "host_name" : "host3"
-      }
-    }
-  ]
-}"""
+          "href" : "http://1.2.3.4:8080/api/v1/hosts",
+          "items" : [
+            {
+              "href" : "http://1.2.3.4:8080/api/v1/hosts/host1",
+              "Hosts" : {
+                "host_name" : "host1"
+              }
+            },
+            {
+              "href" : "http://1.2.3.4:8080/api/v1/hosts/host2",
+              "Hosts" : {
+                "host_name" : "host2"
+              }
+            },
+            {
+              "href" : "http://1.2.3.4:8080/api/v1/hosts/host3",
+              "Hosts" : {
+                "host_name" : "host3"
+              }
+            }
+          ]
+        }"""
         resp = mock.Mock()
         resp.text = resp_data
         resp.status_code = 200
@@ -166,11 +250,11 @@ class AmbariClientTestCase(base.SaharaTestCase):
         client = ambari_client.AmbariClient(self.instance)
         resp = mock.Mock()
         resp.text = """{
-    "Requests": {
-        "id": 1,
-        "status": "InProgress"
-    }
-}"""
+            "Requests": {
+                "id": 1,
+                "status": "InProgress"
+            }
+        }"""
         resp.status_code = 200
         self.http_client.post.return_value = resp
         req_info = client.create_cluster("cluster_name", {"some": "data"})
@@ -179,6 +263,22 @@ class AmbariClientTestCase(base.SaharaTestCase):
             "http://1.2.3.4:8080/api/v1/clusters/cluster_name",
             data=jsonutils.dumps({"some": "data"}), verify=False,
             auth=client._auth, headers=self.headers)
+
+    def test_add_host_to_cluster(self):
+        client = ambari_client.AmbariClient(self.instance)
+        resp = mock.Mock()
+        resp.text = ""
+        resp.status_code = 200
+        self.http_client.post.return_value = resp
+
+        instance = mock.MagicMock()
+        instance.fqdn.return_value = "i1"
+        instance.cluster.name = "cl"
+
+        client.add_host_to_cluster(instance)
+        self.http_client.post.assert_called_with(
+            "http://1.2.3.4:8080/api/v1/clusters/cl/hosts/i1",
+            verify=False, auth=client._auth, headers=self.headers)
 
     def test_start_process_on_host(self):
         client = ambari_client.AmbariClient(self.instance)

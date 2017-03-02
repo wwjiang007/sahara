@@ -14,7 +14,7 @@ name with which to log in to the operating system for an instance.
 Add tags to image
 =================
 
-.. rest_method::  POST /v1.1/{tenant_id}/images/{image_id}/tag
+.. rest_method::  POST /v1.1/{project_id}/images/{image_id}/tag
 
 Adds tags to an image.
 
@@ -26,7 +26,7 @@ Request
 
 .. rest_parameters:: parameters.yaml
 
-   - tenant_id: url_tenant_id
+   - project_id: url_project_id
    - tags: tags
    - image_id: image_id
 
@@ -45,7 +45,7 @@ Request Example
 Show image details
 ==================
 
-.. rest_method::  GET /v1.1/{tenant_id}/images/{image_id}
+.. rest_method::  GET /v1.1/{project_id}/images/{image_id}
 
 Shows details for an image.
 
@@ -58,8 +58,8 @@ Request
 
 .. rest_parameters:: parameters.yaml
 
-   - tenant_id: url_tenant_id
-   - image_id: image_id
+   - project_id: url_project_id
+   - image_id: url_image_id
 
 
 Response Parameters
@@ -70,15 +70,15 @@ Response Parameters
    - status: status
    - username: username
    - updated: updated
-   - description: description
+   - description: image_description
    - created: created
    - image: image
    - tags: tags
    - minDisk: minDisk
-   - name: name
+   - name: image_name
    - progress: progress
    - minRam: minRam
-   - id: id
+   - id: image_id
    - metadata: metadata
 
 
@@ -95,7 +95,7 @@ Response Example
 Register image
 ==============
 
-.. rest_method::  POST /v1.1/{tenant_id}/images/{image_id}
+.. rest_method::  POST /v1.1/{project_id}/images/{image_id}
 
 Registers an image in the registry.
 
@@ -107,10 +107,10 @@ Request
 
 .. rest_parameters:: parameters.yaml
 
-   - tenant_id: url_tenant_id
+   - project_id: url_project_id
    - username: username
-   - description: description
-   - image_id: image_id
+   - description: image_description
+   - image_id: url_image_id
 
 Request Example
 ---------------
@@ -128,15 +128,15 @@ Response Parameters
    - status: status
    - username: username
    - updated: updated
-   - description: description
+   - description: image_description
    - created: created
    - image: image
    - tags: tags
    - minDisk: minDisk
-   - name: name
+   - name: image_name
    - progress: progress
    - minRam: minRam
-   - id: id
+   - id: image_id
    - metadata: metadata
 
 
@@ -146,7 +146,7 @@ Response Parameters
 Unregister image
 ================
 
-.. rest_method::  DELETE /v1.1/{tenant_id}/images/{image_id}
+.. rest_method::  DELETE /v1.1/{project_id}/images/{image_id}
 
 Removes an image from the registry.
 
@@ -158,8 +158,8 @@ Request
 
 .. rest_parameters:: parameters.yaml
 
-   - tenant_id: url_tenant_id
-   - image_id: image_id
+   - project_id: url_project_id
+   - image_id: url_image_id
 
 
 
@@ -169,7 +169,7 @@ Request
 Remove tags from image
 ======================
 
-.. rest_method::  POST /v1.1/{tenant_id}/images/{image_id}/untag
+.. rest_method::  POST /v1.1/{project_id}/images/{image_id}/untag
 
 Removes tags from an image.
 
@@ -181,9 +181,9 @@ Request
 
 .. rest_parameters:: parameters.yaml
 
-   - tenant_id: url_tenant_id
+   - project_id: url_project_id
    - tags: tags
-   - image_id: image_id
+   - image_id: url_image_id
 
 Request Example
 ---------------
@@ -200,7 +200,7 @@ Request Example
 List images
 ===========
 
-.. rest_method::  GET /v1.1/{tenant_id}/images
+.. rest_method::  GET /v1.1/{project_id}/images
 
 Lists all images registered in the registry.
 
@@ -213,7 +213,7 @@ Request
 
 .. rest_parameters:: parameters.yaml
 
-   - tenant_id: url_tenant_id
+   - project_id: url_project_id
    - tags: tags
 
 
@@ -225,16 +225,16 @@ Response Parameters
    - status: status
    - username: username
    - updated: updated
-   - description: description
+   - description: image_description
    - created: created
    - image: image
    - tags: tags
    - minDisk: minDisk
-   - name: name
+   - name: image_name
    - images: images
    - progress: progress
    - minRam: minRam
-   - id: id
+   - id: image_id
    - metadata: metadata
 
 

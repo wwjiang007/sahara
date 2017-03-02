@@ -12,7 +12,7 @@ reports it to the user. Also a user can cancel a running job.
 Refresh job execution status
 ============================
 
-.. rest_method::  GET /v1.1/{tenant_id}/job-executions/{job_execution_id}/refresh-status
+.. rest_method::  GET /v1.1/{project_id}/job-executions/{job_execution_id}/refresh-status
 
 Refreshes the status of and shows information for a job execution.
 
@@ -25,8 +25,8 @@ Request
 
 .. rest_parameters:: parameters.yaml
 
-   - tenant_id: url_tenant_id
-   - job_execution_id: job_execution_id
+   - project_id: url_project_id
+   - job_execution_id: url_job_execution_id
 
 
 Response Parameters
@@ -45,15 +45,15 @@ Response Parameters
    - data_source_urls: data_source_urls
    - return_code: return_code
    - oozie_job_id: oozie_job_id
-   - is_protected: is_protected
+   - is_protected: is_protected_3
    - cluster_id: cluster_id
    - end_time: end_time
    - params: params
-   - is_public: is_public
+   - is_public: job_execution_is_public
    - input_id: input_id
    - configs: configs
    - job_execution: job_execution
-   - id: id
+   - id: job_execution_id
 
 
 
@@ -69,7 +69,7 @@ Response Example
 List job executions
 ===================
 
-.. rest_method::  GET /v1.1/{tenant_id}/job-executions
+.. rest_method::  GET /v1.1/{project_id}/job-executions
 
 Lists available job executions.
 
@@ -82,7 +82,7 @@ Request
 
 .. rest_parameters:: parameters.yaml
 
-   - tenant_id: url_tenant_id
+   - project_id: url_project_id
    - limit: limit
    - marker: marker
    - sort_by: sort_by_job_execution
@@ -108,22 +108,22 @@ Response Parameters
    - data_source_urls: data_source_urls
    - return_code: return_code
    - oozie_job_id: oozie_job_id
-   - is_protected: is_protected
+   - is_protected: is_protected_3
    - cluster_id: cluster_id
    - end_time: end_time
    - params: params
-   - is_public: is_public
+   - is_public: job_execution_is_public
    - input_id: input_id
    - configs: configs
    - job_execution: job_execution
-   - id: id
+   - id: job_execution_id
    - job_executions: job_executions
 
 
 
 Response Example
 ----------------
-.. rest_method:: /v1.1/{tenant_id}/job-executions
+.. rest_method:: /v1.1/{project_id}/job-executions
 
 .. literalinclude:: samples/job-executions/list-response.json
    :language: javascript
@@ -134,7 +134,7 @@ Response Example
 Show job execution details
 ==========================
 
-.. rest_method::  GET /v1.1/{tenant_id}/job-executions/{job_execution_id}
+.. rest_method::  GET /v1.1/{project_id}/job-executions/{job_execution_id}
 
 Shows details for a job execution, by ID.
 
@@ -147,8 +147,8 @@ Request
 
 .. rest_parameters:: parameters.yaml
 
-   - tenant_id: url_tenant_id
-   - job_execution_id: job_execution_id
+   - project_id: url_project_id
+   - job_execution_id: url_job_execution_id
 
 
 Response Parameters
@@ -167,15 +167,15 @@ Response Parameters
    - data_source_urls: data_source_urls
    - return_code: return_code
    - oozie_job_id: oozie_job_id
-   - is_protected: is_protected
+   - is_protected: is_protected_3
    - cluster_id: cluster_id
    - end_time: end_time
    - params: params
-   - is_public: is_public
+   - is_public: job_execution_is_public
    - input_id: input_id
    - configs: configs
    - job_execution: job_execution
-   - id: id
+   - id: job_execution_id
 
 
 
@@ -191,7 +191,7 @@ Response Example
 Delete job execution
 ====================
 
-.. rest_method::  DELETE /v1.1/{tenant_id}/job-executions/{job_execution_id}
+.. rest_method::  DELETE /v1.1/{project_id}/job-executions/{job_execution_id}
 
 Deletes a job execution.
 
@@ -203,8 +203,8 @@ Request
 
 .. rest_parameters:: parameters.yaml
 
-   - tenant_id: url_tenant_id
-   - job_execution_id: job_execution_id
+   - project_id: url_project_id
+   - job_execution_id: url_job_execution_id
 
 
 
@@ -214,7 +214,7 @@ Request
 Update job execution
 ====================
 
-.. rest_method::  PATCH /v1.1/{tenant_id}/job-executions/{job_execution_id}
+.. rest_method::  PATCH /v1.1/{project_id}/job-executions/{job_execution_id}
 
 Updates a job execution.
 
@@ -226,8 +226,8 @@ Request
 
 .. rest_parameters:: parameters.yaml
 
-   - tenant_id: url_tenant_id
-   - job_execution_id: job_execution_id
+   - project_id: url_project_id
+   - job_execution_id: url_job_execution_id
 
 Request Example
 ---------------
@@ -253,15 +253,15 @@ Response Parameters
    - data_source_urls: data_source_urls
    - return_code: return_code
    - oozie_job_id: oozie_job_id
-   - is_protected: is_protected
+   - is_protected: is_protected_3
    - cluster_id: cluster_id
    - end_time: end_time
    - params: params
-   - is_public: is_public
+   - is_public: job_execution_is_public
    - input_id: input_id
    - configs: configs
    - job_execution: job_execution
-   - id: id
+   - id: job_execution_id
 
 
 
@@ -270,7 +270,7 @@ Response Parameters
 Cancel job execution
 ====================
 
-.. rest_method::  GET /v1.1/{tenant_id}/job-executions/{job_execution_id}/cancel
+.. rest_method::  GET /v1.1/{project_id}/job-executions/{job_execution_id}/cancel
 
 Cancels a job execution.
 
@@ -283,8 +283,8 @@ Request
 
 .. rest_parameters:: parameters.yaml
 
-   - tenant_id: url_tenant_id
-   - job_execution_id: job_execution_id
+   - project_id: url_project_id
+   - job_execution_id: url_job_execution_id
 
 
 Response Parameters
@@ -303,15 +303,15 @@ Response Parameters
    - data_source_urls: data_source_urls
    - return_code: return_code
    - oozie_job_id: oozie_job_id
-   - is_protected: is_protected
+   - is_protected: is_protected_3
    - cluster_id: cluster_id
    - end_time: end_time
    - params: params
-   - is_public: is_public
+   - is_public: job_execution_is_public
    - input_id: input_id
    - configs: configs
    - job_execution: job_execution
-   - id: id
+   - id: job_execution_id
 
 
 

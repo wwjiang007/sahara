@@ -11,13 +11,13 @@ install and which configurations can be set for the cluster.
 Show plugin details
 ===================
 
-.. rest_method::  GET /v1.1/{tenant_id}/plugins/{plugin_name}
+.. rest_method::  GET /v1.1/{project_id}/plugins/{plugin_name}
 
 Shows details for a plugin.
 
 
 Normal response codes: 200
-Error response codes:
+Error response codes: 400, 500
 
 
 Request
@@ -25,8 +25,8 @@ Request
 
 .. rest_parameters:: parameters.yaml
 
-   - tenant_id: url_tenant_id
-   - plugin_name: plugin_name
+   - project_id: url_project_id
+   - plugin_name: url_plugin_name
 
 
 Response Parameters
@@ -36,8 +36,8 @@ Response Parameters
 
    - versions: versions
    - title: title
-   - description: description
-   - name: name
+   - description: description_plugin
+   - name: plugin_name
 
 
 
@@ -53,13 +53,13 @@ Response Example
 List plugins
 ============
 
-.. rest_method::  GET /v1.1/{tenant_id}/plugins
+.. rest_method::  GET /v1.1/{project_id}/plugins
 
 Lists all registered plugins.
 
 
 Normal response codes: 200
-Error response codes:
+Error response codes: 400, 500
 
 
 Request
@@ -67,7 +67,7 @@ Request
 
 .. rest_parameters:: parameters.yaml
 
-   - tenant_id: url_tenant_id
+   - project_id: url_project_id
 
 
 
@@ -79,8 +79,8 @@ Response Parameters
    - title: title
    - versions: versions
    - plugins: plugins
-   - description: description
-   - name: name
+   - description: description_plugin
+   - name: plugin_name
 
 
 
@@ -96,13 +96,13 @@ Response Example
 Show plugin version details
 ===========================
 
-.. rest_method::  GET /v1.1/{tenant_id}/plugins/{plugin_name}/{version}
+.. rest_method::  GET /v1.1/{project_id}/plugins/{plugin_name}/{version}
 
 Shows details for a plugin version.
 
 
 Normal response codes: 200
-Error response codes:
+Error response codes: 400, 500
 
 
 Request
@@ -110,8 +110,8 @@ Request
 
 .. rest_parameters:: parameters.yaml
 
-   - tenant_id: url_tenant_id
-   - plugin_name: plugin_name
+   - project_id: url_project_id
+   - plugin_name: url_plugin_name
    - version: version
 
 
@@ -122,8 +122,8 @@ Response Parameters
 
    - versions: versions
    - title: title
-   - description: description
-   - name: name
+   - description: description_plugin
+   - name: plugin_name
 
 
 
@@ -139,13 +139,13 @@ Response Example
 Update plugin details
 =====================
 
-.. rest_method::  PATCH /v1.1/{tenant_id}/plugins/{plugin_name}
+.. rest_method::  PATCH /v1.1/{project_id}/plugins/{plugin_name}
 
 Updates details for a plugin.
 
 
-Normal response codes:202
-Error response codes:
+Normal response codes: 202
+Error response codes: 400, 500
 
 
 Request
@@ -153,8 +153,8 @@ Request
 
 .. rest_parameters:: parameters.yaml
 
-   - tenant_id: url_tenant_id
-   - plugin_name: plugin_name
+   - project_id: url_project_id
+   - plugin_name: url_plugin_name
 
 
 Request Example
@@ -172,8 +172,8 @@ Response Parameters
 
    - title: title
    - versions: versions
-   - description: description
-   - name: name
+   - description: description_plugin
+   - name: plugin_name
 
 
 Response Example
