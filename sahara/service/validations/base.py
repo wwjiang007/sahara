@@ -104,10 +104,14 @@ def check_node_group_configs(plugin_name, hadoop_version, ng_configs,
 
 
 def check_all_configurations(data):
-    pl_confs = _get_plugin_configs(data['plugin_name'], data['hadoop_version'])
+    plugin_version = 'hadoop_version'
+    if data.get('plugin_version'):
+        plugin_version = 'plugin_version'
+
+    pl_confs = _get_plugin_configs(data['plugin_name'], data[plugin_version])
 
     if data.get('cluster_configs'):
-        check_node_group_configs(data['plugin_name'], data['hadoop_version'],
+        check_node_group_configs(data['plugin_name'], data[plugin_version],
                                  data['cluster_configs'],
                                  plugin_configs=pl_confs)
 
@@ -115,7 +119,7 @@ def check_all_configurations(data):
         check_duplicates_node_groups_names(data['node_groups'])
         for ng in data['node_groups']:
             check_node_group_basic_fields(data['plugin_name'],
-                                          data['hadoop_version'],
+                                          data[plugin_version],
                                           ng, pl_confs)
 
 # NodeGroup related checks
@@ -258,11 +262,11 @@ def check_volume_type_exists(volume_type):
 
 # Cluster creation related checks
 
-def check_cluster_unique_name(name):
-    if name in [cluster.name for cluster in api.get_clusters(
-            tenant_id=context.ctx().tenant_id)]:
+def check_cluster_unique_name(cluster_name):
+    if cluster_name in [cluster.name for cluster in
+                        api.get_clusters(name=cluster_name)]:
         raise ex.NameAlreadyExistsException(
-            _("Cluster with name '%s' already exists") % name)
+            _("Cluster with name '%s' already exists") % cluster_name)
 
 
 def check_cluster_hostnames_lengths(cluster_name, node_groups):
@@ -294,11 +298,13 @@ def check_network_exists(net_id):
 
 # Cluster templates related checks
 
-def check_cluster_template_unique_name(name):
-    if name in [t.name for t in api.get_cluster_templates(
-            tenant_id=context.ctx().tenant_id)]:
+def check_cluster_template_unique_name(cluster_tmpl_name):
+    if cluster_tmpl_name in [cluster_tmpl.name for cluster_tmpl in
+                             api.get_cluster_templates(
+                                 name=cluster_tmpl_name)]:
         raise ex.NameAlreadyExistsException(
-            _("Cluster template with name '%s' already exists") % name)
+            _("Cluster template with name '%s' already exists") %
+            cluster_tmpl_name)
 
 
 def check_cluster_template_exists(cluster_template_id):
@@ -320,11 +326,12 @@ def check_node_groups_in_cluster_templates(cluster_name, plugin_name,
 # NodeGroup templates related checks
 
 
-def check_node_group_template_unique_name(name):
-    if name in [t.name for t in api.get_node_group_templates(
-            tenant_id=context.ctx().tenant_id)]:
+def check_node_group_template_unique_name(ng_tmpl_name):
+    if ng_tmpl_name in [ng_tmpl.name for ng_tmpl in
+                        api.get_node_group_templates(name=ng_tmpl_name)]:
         raise ex.NameAlreadyExistsException(
-            _("NodeGroup template with name '%s' already exists") % name)
+            _("NodeGroup template with name '%s' already exists") %
+            ng_tmpl_name)
 
 
 def check_node_group_template_exists(ng_tmpl_id):

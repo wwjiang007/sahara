@@ -21,9 +21,6 @@ from oslo_log import log
 from oslo_utils import uuidutils
 from tooz import coordination
 
-from sahara.i18n import _LE
-from sahara.i18n import _LI
-
 LOG = log.getLogger(__name__)
 
 coordinator_opts = [
@@ -52,9 +49,9 @@ class Coordinator(object):
                 self.coordinator = coordination.get_coordinator(
                     backend_url, self.member_id)
                 self.coordinator.start()
-                LOG.info(_LI('Coordination backend loaded successfully.'))
+                LOG.info('Coordination backend loaded successfully.')
             except coordination.ToozError:
-                LOG.error(_LE('Error connecting to coordination backend.'))
+                LOG.error('Error connecting to coordination backend.')
                 raise
 
     def is_started(self):
@@ -88,8 +85,8 @@ class Coordinator(object):
                 except coordination.GroupNotCreated:
                     self.join_group(group_id)
                 except coordination.ToozError as e:
-                    LOG.error(_LE("Couldn't get members of {group} group. "
-                              "Reason: {ex}").format(
+                    LOG.error("Couldn't get members of {group} group. "
+                              "Reason: {ex}".format(
                                   group=group_id, ex=str(e)))
         return []
 

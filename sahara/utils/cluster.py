@@ -23,8 +23,6 @@ from six.moves.urllib import parse
 from sahara import conductor as c
 from sahara import context
 from sahara import exceptions as e
-from sahara.i18n import _LI
-from sahara.i18n import _LW
 from sahara.utils.notification import sender
 from sahara.utils.openstack import base as auth_base
 
@@ -97,8 +95,8 @@ def change_cluster_status(cluster, status, status_description=None):
     cluster = conductor.cluster_update(ctx, cluster, update_dict)
     conductor.cluster_provision_progress_update(ctx, cluster.id)
 
-    LOG.info(_LI("Cluster status has been changed. New status="
-                 "{status}").format(status=cluster.status))
+    LOG.info("Cluster status has been changed. New status="
+             "{status}".format(status=cluster.status))
 
     sender.status_notify(cluster.id, cluster.name, cluster.status,
                          "update")
@@ -148,9 +146,8 @@ def etc_hosts_entry_for_service(service):
     try:
         result = "%s %s\n" % (socket.gethostbyname(hostname), hostname)
     except socket.gaierror:
-        LOG.warning(
-            _LW("Failed to resolve hostname of service: '{}'").format(service)
-        )
+        LOG.warning("Failed to resolve hostname of service: '{}'"
+                    .format(service))
         result = "# Failed to resolve {} during deployment\n".format(hostname)
     return result
 

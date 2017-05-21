@@ -22,7 +22,7 @@ from oslo_config import cfg
 from sahara.conductor import resource as r
 from sahara.db import base as db_base
 from sahara.service.castellan import utils as key_manager
-from sahara.service import shares
+from sahara.service.edp.utils import shares
 from sahara.utils import configs
 from sahara.utils import crypto
 
@@ -33,6 +33,7 @@ CLUSTER_DEFAULTS = {
     "cluster_configs": {},
     "status": "undefined",
     "anti_affinity": [],
+    "anti_affinity_ratio": 1,
     "status_description": "",
     "info": {},
     "rollback_info": {},

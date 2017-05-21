@@ -19,8 +19,6 @@ from sahara import conductor as cond
 from sahara import context
 from sahara import exceptions as ex
 from sahara.i18n import _
-from sahara.i18n import _LE
-from sahara.i18n import _LW
 
 conductor = cond.API
 LOG = logging.getLogger(__name__)
@@ -108,7 +106,7 @@ class LabelHandler(object):
         try:
             plugin = conductor.plugin_get(context.ctx(), plugin_name)
         except Exception:
-            LOG.error(_LE("Unable to retrieve plugin data from database"))
+            LOG.error("Unable to retrieve plugin data from database")
             plugin = None
         if not plugin:
             plugin = self.get_default_label_details(plugin_name)
@@ -210,8 +208,8 @@ class LabelHandler(object):
                 _("Plugin %s is not enabled") % plugin_name)
 
         if plb.get('deprecated', {}).get('status', False):
-            LOG.warning(_LW("Plugin %s is deprecated and can be removed in "
-                            "the next release") % plugin_name)
+            LOG.warning("Plugin %s is deprecated and can be removed in "
+                        "the next release" % plugin_name)
 
         vlb = details.get(VERSION_LABELS_SCOPE, {}).get(version, {})
         if not vlb.get('enabled', {}).get('status'):
@@ -220,7 +218,6 @@ class LabelHandler(object):
                 % {'version': version, 'plugin': plugin_name})
 
         if vlb.get('deprecated', {}).get('status', False):
-            LOG.warning(
-                _LW("Using version %(version)s of plugin %(plugin)s is "
-                    "deprecated and can removed in next release")
-                % {'version': version, 'plugin': plugin_name})
+            LOG.warning("Using version %(version)s of plugin %(plugin)s is "
+                        "deprecated and can removed in next release"
+                        % {'version': version, 'plugin': plugin_name})

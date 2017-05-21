@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import copy
+
 from oslo_log import log as logging
 import six
 import yaml
@@ -20,7 +22,6 @@ import yaml
 from sahara import conductor
 from sahara import context
 from sahara.i18n import _
-from sahara.i18n import _LI
 from sahara.plugins import exceptions as ex
 from sahara.plugins import provisioning as p
 from sahara.plugins.storm import config_helper as c_helper
@@ -50,8 +51,20 @@ class StormProvider(p.ProvisioningPluginBase):
             _("This plugin provides an ability to launch Storm "
               "cluster without any management consoles."))
 
+    def get_labels(self):
+        default = {'enabled': {'status': True}, 'stable': {'status': True}}
+        deprecated = {'enabled': {'status': True},
+                      'deprecated': {'status': True}}
+        result = {'plugin_labels': copy.deepcopy(default)}
+        result['version_labels'] = {
+            '1.1.0': copy.deepcopy(default),
+            '1.0.1': copy.deepcopy(default),
+            '0.9.2': copy.deepcopy(deprecated),
+        }
+        return result
+
     def get_versions(self):
-        return ['0.9.2', '1.0.1']
+        return ['0.9.2', '1.0.1', '1.1.0']
 
     def get_configs(self, storm_version):
         return c_helper.get_plugin_configs()
@@ -64,8 +77,12 @@ class StormProvider(p.ProvisioningPluginBase):
         sm_count = sum([ng.count for ng
                         in utils.get_node_groups(cluster, "nimbus")])
 
-        if sm_count != 1:
+        if sm_count < 1:
             raise ex.RequiredServiceMissingException("Storm nimbus")
+
+        if sm_count >= 2:
+            raise ex.InvalidComponentCountException("Storm nimbus", "1",
+                                                    sm_count)
 
         sl_count = sum([ng.count for ng
                         in utils.get_node_groups(cluster, "supervisor")])
@@ -96,8 +113,8 @@ class StormProvider(p.ProvisioningPluginBase):
         # start storm slaves
         self._start_slave_processes(sl_instances)
 
-        LOG.info(_LI('Cluster {cluster} has been started successfully').format(
-                 cluster=cluster.name))
+        LOG.info("Cluster {cluster} has been started successfully".format(
+            cluster=cluster.name))
         self._set_cluster_info(cluster)
 
     def get_edp_engine(self, cluster, job_type):
@@ -176,8 +193,8 @@ class StormProvider(p.ProvisioningPluginBase):
     def _start_storm_master(self, sm_instance):
         with remote.get_remote(sm_instance) as r:
             run.start_storm_nimbus_and_ui(r)
-            LOG.info(_LI("Storm master at {host} has been started").format(
-                     host=sm_instance.hostname()))
+            LOG.info("Storm master at {host} has been started".format(
+                host=sm_instance.hostname()))
 
     def _start_slave_processes(self, sl_instances):
         if len(sl_instances) == 0:
@@ -366,7 +383,7 @@ class StormProvider(p.ProvisioningPluginBase):
         # start storm slaves
         self._start_slave_processes(instances)
         self.rebalance_topology(cluster)
-        LOG.info(_LI("Storm scaling has been started."))
+        LOG.info("Storm scaling has been started.")
 
     def _get_scalable_processes(self):
         return ["supervisor"]

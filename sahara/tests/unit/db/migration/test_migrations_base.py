@@ -37,7 +37,6 @@ from oslo_log import log as logging
 import sahara.db.migration
 from sahara.db.sqlalchemy import api as sa
 from sahara.db.sqlalchemy import model_base
-from sahara.i18n import _LE
 
 
 LOG = logging.getLogger(__name__)
@@ -61,8 +60,7 @@ class BaseWalkMigrationTestCase(object):
         should use oslo_config and openstack.commom.db.sqlalchemy.session with
         database functionality (reset default settings and session cleanup).
         """
-        CONF.set_override('connection', str(engine.url), group='database',
-                          enforce_type=True)
+        CONF.set_override('connection', str(engine.url), group='database')
         sa.cleanup()
 
     def _alembic_command(self, alembic_command, engine, *args, **kwargs):
@@ -71,8 +69,7 @@ class BaseWalkMigrationTestCase(object):
         We should redefine this setting for getting info.
         """
         self.ALEMBIC_CONFIG.stdout = buf = io.StringIO()
-        CONF.set_override('connection', str(engine.url), group='database',
-                          enforce_type=True)
+        CONF.set_override('connection', str(engine.url), group='database')
         sa.cleanup()
         getattr(command, alembic_command)(*args, **kwargs)
         res = buf.getvalue().strip()
@@ -152,8 +149,8 @@ class BaseWalkMigrationTestCase(object):
                 if check:
                     check(engine, data)
         except Exception:
-            LOG.error(_LE("Failed to migrate to version {version} on engine "
-                      "{engine}").format(version=version, engine=engine))
+            LOG.error("Failed to migrate to version {version} on engine "
+                      "{engine}".format(version=version, engine=engine))
             raise
 
 
@@ -174,8 +171,7 @@ class TestModelsMigrationsSync(t_m.ModelsMigrationsSync):
         return self.engine
 
     def db_sync(self, engine):
-        CONF.set_override('connection', str(engine.url), group='database',
-                          enforce_type=True)
+        CONF.set_override('connection', str(engine.url), group='database')
         alembic.command.upgrade(self.ALEMBIC_CONFIG, 'head')
 
     def get_metadata(self):

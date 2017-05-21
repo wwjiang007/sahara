@@ -13,17 +13,15 @@
 # limitations under the License.
 
 from sahara import conductor  # noqa
-from sahara.i18n import _LE
-from sahara.i18n import _LI
 from sahara.plugins import base as plugins_base
 from sahara.utils import remote
 
 try:
     import guestfs
 except ImportError:
-    raise Exception(_LE("The image packing API depends on the system package "
-                        "python-libguestfs (and libguestfs itself.) Please "
-                        "install these packages to proceed."))
+    raise Exception("The image packing API depends on the system package "
+                    "python-libguestfs (and libguestfs itself.) Please "
+                    "install these packages to proceed.")
 
 
 LOG = None
@@ -90,9 +88,9 @@ class ImageRemote(remote.TerminalOnlyRemote):
     def execute_command(self, cmd, run_as_root=False, get_stderr=False,
                         raise_when_error=True, timeout=300):
         try:
-            LOG.info(_LI("Issuing command: {cmd}").format(cmd=cmd))
+            LOG.info("Issuing command: {cmd}".format(cmd=cmd))
             stdout = self.guest.sh(cmd)
-            LOG.info(_LI("Received response: {stdout}").format(stdout=stdout))
+            LOG.info("Received response: {stdout}".format(stdout=stdout))
             return 0, stdout
         except RuntimeError as ex:
             if raise_when_error:

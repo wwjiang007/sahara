@@ -40,10 +40,7 @@ class CDHPluginProvider(p.ProvisioningPluginBase):
         result['version_labels'] = {
             '5.9.0': copy.deepcopy(default),
             '5.7.0': copy.deepcopy(default),
-            '5.5.0': copy.deepcopy(default),
-            '5.4.0': copy.deepcopy(deprecated),
-            '5.3.0': copy.deepcopy(deprecated),
-            '5': copy.deepcopy(deprecated),
+            '5.5.0': copy.deepcopy(deprecated),
         }
         return result
 

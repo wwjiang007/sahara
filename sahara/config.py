@@ -24,6 +24,8 @@ from sahara import exceptions as ex
 from sahara.i18n import _
 from sahara.plugins import opts as plugins_base
 from sahara.service.castellan import config as castellan
+from sahara.service.edp.data_sources import opts as data_source
+from sahara.service.edp.job_binaries import opts as job_binary
 from sahara.topology import topology_helper
 from sahara.utils.notification import sender
 from sahara.utils.openstack import cinder
@@ -33,8 +35,9 @@ from sahara import version
 
 
 cli_opts = [
-    cfg.StrOpt('host', default='',
-               help='Hostname or IP address that will be used to listen on.'),
+    cfg.HostAddressOpt('host', default='0.0.0.0',
+                       help='Hostname or IP address that will be used '
+                            'to listen on.'),
     cfg.PortOpt('port', default=8386,
                 help='Port that will be used to listen on.'),
     cfg.BoolOpt('log-exchange', default=False,
@@ -180,7 +183,9 @@ def list_opts():
                          heat_engine.heat_engine_opts,
                          templates.heat_engine_opts,
                          ssh_remote.ssh_config_options,
-                         castellan.opts)),
+                         castellan.opts,
+                         data_source.opts,
+                         job_binary.opts)),
         (poll_utils.timeouts.name,
          itertools.chain(poll_utils.timeouts_opts)),
         (api.conductor_group.name,

@@ -14,6 +14,8 @@
 # limitations under the License.
 
 
+import copy
+
 import sahara.service.validations.edp.base as b
 
 
@@ -50,6 +52,15 @@ JOB_EXEC_SCHEMA = {
 }
 
 
+JOB_EXEC_SCHEMA_V2 = copy.deepcopy(JOB_EXEC_SCHEMA)
+JOB_EXEC_SCHEMA_V2['properties'].update({
+    "job_templates_id": {
+        "type": "string",
+        "format": "uuid",
+    }})
+JOB_EXEC_SCHEMA_V2['required'].append('job_templates_id')
+
+
 JOB_EXEC_UPDATE_SCHEMA = {
     "type": "object",
     "properties": {
@@ -63,7 +74,7 @@ JOB_EXEC_UPDATE_SCHEMA = {
             "type": "simple_config",
             "properties": {
                     "status": {
-                        "enum": ["suspend"]
+                        "enum": ["suspend", "cancel"]
                     }
             },
             "additionalProperties": False

@@ -110,7 +110,7 @@ class ImageArgument(object):
         """Constructs and returns a set of arguments from a specification.
 
         :param spec: The specification for the argument set.
-        :return A dict of arguments built to the specification.
+        :return: A dict of arguments built to the specification.
         """
 
         jsonschema.validate(spec, cls.SPEC_SCHEMA)
@@ -183,6 +183,7 @@ class SaharaImageValidatorBase(ImageValidator):
         'centos': 'redhat',
         'centos7': 'redhat',
         'fedora': 'redhat',
+        'redhat': 'redhat',
         'redhatenterpriseserver': 'redhat',
         'ubuntu': 'debian'
     }
@@ -194,7 +195,7 @@ class SaharaImageValidatorBase(ImageValidator):
         :param custom_validator_map: A map of validator names and classes to
             add to the ones Sahara provides by default. These will take
             precedence over the base validators in case of key overlap.
-        :return A map of validator names and classes.
+        :return: A map of validator names and classes.
         """
         default_validator_map = {
             'package': SaharaPackageValidator,
@@ -218,7 +219,7 @@ class SaharaImageValidatorBase(ImageValidator):
         :param resource_roots: The roots from which relative paths to
             resources (scripts and such) will be referenced. Any resource will
             be pulled from the first path in the list at which a file exists.
-        :return A SaharaImageValidator built to the yaml specification.
+        :return: A SaharaImageValidator built to the yaml specification.
         """
         validator_map = validator_map or {}
         resource_roots = resource_roots or []
@@ -236,7 +237,7 @@ class SaharaImageValidatorBase(ImageValidator):
         :param resource_roots: The roots from which relative paths to
             resources (scripts and such) will be referenced. Any resource will
             be pulled from the first path in the list at which a file exists.
-        :return A validator built to the specification.
+        :return: A validator built to the specification.
         """
         pass
 
@@ -304,7 +305,7 @@ class SaharaImageValidatorBase(ImageValidator):
             and succeed if this enforcement succeeds.
         :param image_arguments: A dictionary of image argument values keyed by
             argument name.
-        :return True if successful, ValidationAttemptFailed object if failed.
+        :return: True if successful, ValidationAttemptFailed object if failed.
         """
         try:
             self.validate(
@@ -346,7 +347,7 @@ class SaharaImageValidator(SaharaImageValidatorBase):
         :param resource_roots: The roots from which relative paths to
             resources (scripts and such) will be referenced. Any resource will
             be pulled from the first path in the list at which a file exists.
-        :return A SaharaImageValidator containing all specified validators.
+        :return: A SaharaImageValidator containing all specified validators.
         """
         jsonschema.validate(spec, cls.SPEC_SCHEMA)
         arguments_spec = spec.get('arguments', {})
@@ -671,9 +672,7 @@ class SaharaScriptValidator(SaharaImageValidatorBase):
         arguments = copy.deepcopy(image_arguments)
         arguments[self.RECONCILE_KEY] = 1 if reconcile else 0
         script = "\n".join(["%(env_vars)s",
-                            "bash <<_SIV_",
-                            "%(script)s",
-                            "_SIV_"])
+                            "%(script)s"])
         env_vars = "\n".join("export %s=%s" % (key, value) for (key, value)
                              in six.iteritems(image_arguments)
                              if key in self.env_vars)

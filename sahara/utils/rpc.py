@@ -21,7 +21,6 @@ from oslo_messaging.rpc import dispatcher
 from oslo_serialization import jsonutils
 
 from sahara import context
-from sahara.i18n import _LE
 
 
 MESSAGING_TRANSPORT = None
@@ -30,12 +29,6 @@ NOTIFIER = None
 
 CONF = cfg.CONF
 LOG = logging.getLogger(__name__)
-
-_ALIASES = {
-    'sahara.openstack.common.rpc.impl_kombu': 'rabbit',
-    'sahara.openstack.common.rpc.impl_qpid': 'qpid',
-    'sahara.openstack.common.rpc.impl_zmq': 'zmq',
-}
 
 
 class ContextSerializer(messaging.Serializer):
@@ -102,17 +95,17 @@ def setup_service_messaging():
     if MESSAGING_TRANSPORT:
         # Already is up
         return
-    MESSAGING_TRANSPORT = messaging.get_transport(cfg.CONF, aliases=_ALIASES)
+    MESSAGING_TRANSPORT = messaging.get_transport(cfg.CONF)
 
 
 def setup_notifications():
     global NOTIFICATION_TRANSPORT, NOTIFIER, MESSAGING_TRANSPORT
     try:
         NOTIFICATION_TRANSPORT = \
-            messaging.get_notification_transport(cfg.CONF, aliases=_ALIASES)
+            messaging.get_notification_transport(cfg.CONF)
     except Exception:
-        LOG.error(_LE("Unable to setup notification transport. Reusing "
-                      "service transport for that."))
+        LOG.error("Unable to setup notification transport. Reusing "
+                  "service transport for that.")
         setup_service_messaging()
         NOTIFICATION_TRANSPORT = MESSAGING_TRANSPORT
 

@@ -20,53 +20,8 @@ import re
 # keystone but it will need additional work and total checks refactoring.
 
 
-log_translation_LI = re.compile(
-    r"(.)*LOG\.(info)\(\s*(_\(|'|\")")
-log_translation_LE = re.compile(
-    r"(.)*LOG\.(exception)\(\s*(_\(|'|\")")
-log_translation_LW = re.compile(
-    r"(.)*LOG\.(warning)\(\s*(_\(|'|\")")
-log_translation_LC = re.compile(
-    r"(.)*LOG\.(critical)\(\s*('|\")")
 accepted_log_level = re.compile(
     r"^LOG\.(debug|info|exception|warning|error|critical)\(")
-
-
-def validate_log_translations(logical_line, filename):
-    """Check if log levels has translations and if it's correct.
-
-    S369
-    S370
-    S371
-    S372
-    """
-
-    # NOTE(Kezar): sahara/tests included because we don't require translations
-    # in tests. sahara/db/templates provide separate cli interface so we don't
-    # want to translate it.
-
-    ignore_dirs = ["sahara/db/templates",
-                   "sahara/tests"]
-    for directory in ignore_dirs:
-        if directory in filename:
-            return
-
-    # Translations are not required in the test directory.
-    # This will not catch all instances of violations, just direct
-    # misuse of the form LOG.info('Message').
-    msg = "S369: LOG.info messages require translations `_LI()`!"
-    if log_translation_LI.search(logical_line):
-        yield (0, msg)
-    msg = ("S370: LOG.exception and LOG.error messages require "
-           "translations `_LE()`!")
-    if log_translation_LE.search(logical_line):
-        yield (0, msg)
-    msg = "S371: LOG.warning messages require translations `_LW()`!"
-    if log_translation_LW.search(logical_line):
-        yield (0, msg)
-    msg = "S372: LOG.critical messages require translations `_LC()`!"
-    if log_translation_LC.search(logical_line):
-        yield (0, msg)
 
 
 def no_translate_debug_logs(logical_line, filename):

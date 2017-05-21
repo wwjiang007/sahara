@@ -27,10 +27,11 @@ from sahara.api import acl
 from sahara.common import config as common_config
 from sahara import config
 from sahara import context
-from sahara.i18n import _LI
 from sahara.plugins import base as plugins_base
 from sahara.service import api
 from sahara.service.castellan import config as castellan
+from sahara.service.edp.data_sources import manager as ds_manager
+from sahara.service.edp.job_binaries import manager as jb_manager
 from sahara.service import ops as service_ops
 from sahara.service import periodic
 from sahara.utils.openstack import cinder
@@ -85,7 +86,10 @@ def setup_common(possible_topdir, service_name):
 
     plugins_base.setup_plugins()
 
-    LOG.info(_LI('Sahara {service} started').format(service=service_name))
+    ds_manager.setup_data_sources()
+    jb_manager.setup_job_binaries()
+
+    LOG.info('Sahara {service} started'.format(service=service_name))
 
 
 def validate_castellan_config():
@@ -124,7 +128,7 @@ def _load_driver(namespace, name):
         name=name,
         invoke_on_load=True
     )
-    LOG.info(_LI("Driver {name} successfully loaded").format(name=name))
+    LOG.info("Driver {name} successfully loaded".format(name=name))
 
     return extension_manager.driver
 

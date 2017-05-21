@@ -17,15 +17,15 @@ import abc
 import functools
 import threading
 
+from eventlet import timeout as e_timeout
 from oslo_config import cfg
 from oslo_log import log as logging
 import six
 
 from sahara import conductor
 from sahara import context
-from sahara import exceptions
+from sahara import exceptions as ex
 from sahara.i18n import _
-from sahara.i18n import _LE
 from sahara.plugins import base as plugin_base
 from sahara.service.health import common
 from sahara.utils import cluster as cluster_utils
@@ -36,7 +36,7 @@ CONF = cfg.CONF
 LOG = logging.getLogger(__name__)
 
 
-class BaseHealthError(exceptions.SaharaException):
+class BaseHealthError(ex.SaharaException):
     message_template = _("Cluster health is %(status)s. Reason: %(reason)s")
     code = 'HEALTH_ERROR'
     status = 'UNKNOWN'
@@ -109,18 +109,24 @@ class BasicHealthCheck(object):
         sender.health_notify(self.cluster, self.health_check)
 
     def execute(self):
-        if not self.is_available():
-            return
-        self._indicate_start()
+        timeout = CONF.cluster_verifications.verification_timeout
         try:
-            result = self.check_health()
-            status = common.HEALTH_STATUS_GREEN
-        except Exception as exc:
-            result = six.text_type(exc)
-            if isinstance(exc, BaseHealthError):
-                status = exc.status
-            else:
-                status = common.HEALTH_STATUS_RED
+            with e_timeout.Timeout(timeout, ex.TimeoutException(timeout)):
+                if not self.is_available():
+                    return
+                self._indicate_start()
+                try:
+                    result = self.check_health()
+                    status = common.HEALTH_STATUS_GREEN
+                except Exception as exc:
+                    result = six.text_type(exc)
+                    if isinstance(exc, BaseHealthError):
+                        status = exc.status
+                    else:
+                        status = common.HEALTH_STATUS_RED
+        except ex.TimeoutException:
+            result = _("Health check timed out")
+            status = common.HEALTH_STATUS_YELLOW
         self._write_result(status, result)
 
 
@@ -141,7 +147,7 @@ class AllInstancesAccessible(BasicHealthCheck):
         if inst_ips_or_names:
             insts = ', '.join(inst_ips_or_names)
             LOG.exception(
-                _LE("Instances (%s) are not available in the cluster") % insts)
+                "Instances (%s) are not available in the cluster" % insts)
             raise RedHealthError(
                 _("Instances (%s) are not available in the cluster.") % insts)
         return _("All instances are available")
@@ -173,7 +179,7 @@ class ResolvConfIsUnchanged(BasicHealthCheck):
                 "Instances ({}) have incorrect '/etc/resolv.conf' "
                 "file, expected nameservers: {}.").format(insts, ns)
         if bad_inst_msg or res_conf_msg:
-            LOG.exception(_LE("{} {}").format(res_conf_msg, bad_inst_msg))
+            LOG.exception("{} {}".format(res_conf_msg, bad_inst_msg))
             raise RedHealthError(_("{} {}").format(res_conf_msg, bad_inst_msg))
         return _("All instances have correct '/etc/resolv.conf' file")
 
@@ -191,7 +197,7 @@ class AlertsProvider(object):
                 data = self._get_resolv_conf(r)
         except Exception:
             data = None
-            LOG.exception(_LE("Couldn't read '/etc/resolv.conf'"))
+            LOG.exception("Couldn't read '/etc/resolv.conf'")
         with lock:
             self._data[instance.get_ip_or_dns_name()] = data
 
